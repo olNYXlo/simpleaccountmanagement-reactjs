@@ -1,9 +1,12 @@
 import React, {Component} from 'react';
-import { Container, TextField, Button, Typography } from '@material-ui/core';
+import { Container, TextField, Button, Typography,InputAdornment, IconButton } from '@material-ui/core';
 import Axios from 'axios';
 import { Redirect } from 'react-router';
 import {Link} from 'react-router-dom'
 
+
+import AccessibleForwardSharpIcon from '@material-ui/icons/AccessibleForwardSharp';
+import AccessibilitySharpIcon from '@material-ui/icons/AccessibilitySharp';
 
 class Registration extends Component {
 
@@ -12,10 +15,21 @@ class Registration extends Component {
         this.state ={
             password : "",
             username : "",
-            redirect : false
+            email : "",
+            firstname : "",
+            lastname : "",
+            mobileNo : "",
+            redirect : false,
+            showPassword : false
         }
         this.handlePw = this.handlePw.bind(this);
         this.handleUn = this.handleUn.bind(this);
+        this.handleFn = this.handleFn.bind(this);
+        this.handleLn = this.handleLn.bind(this);
+        this.handleEm = this.handleEm.bind(this);
+        this.handleMn = this.handleMn.bind(this);
+        this.handleShowPw = this.handleShowPw.bind(this);
+        this.handleCfmPw = this.handleCfmPw.bind(this);
     }
 
     handlePw = (inputPw) => {
@@ -26,6 +40,28 @@ class Registration extends Component {
         this.setState({username : inputUn.target.value})
     }
 
+    handleFn = (inputFn) => {
+        this.setState({firstname : inputFn.target.value})
+    }
+    handleLn = (inputLn) => {
+        this.setState({lastname : inputLn.target.value})
+    }
+    handleEm = (inputEm) => {
+        this.setState({email : inputEm.target.value})
+    }
+    handleMn = (inputMn) => {
+        this.setState({mobileNo : inputMn.target.value})
+    }
+
+    handleShowPw = () => {
+        this.setState({showPassword : !this.state.showPassword})
+    }
+
+    CfmPw = ""
+    handleCfmPw = (inputCfmPw) => {
+        this.CfmPw = inputCfmPw.target.value
+    }
+
 
     
 
@@ -36,13 +72,15 @@ class Registration extends Component {
 
 
 
-    loginHandler = () => {
+    RegisterHandler = () => {
         console.log(this.state)
-        
-        Axios.post("http://localhost:8091/register", this.state)
-        .then(res => {
+        console.log(this.CfmPw)
+        if (this.CfmPw === this.state.password){
+
+            Axios.post("http://localhost:8091/register", this.state)
+            .then(res => {
             console.log(res);
-            console.log(res.data)
+            console.log(res.data);
             if (res.data === true){
                 console.log("registration successful")
                 this.setState({
@@ -55,6 +93,13 @@ class Registration extends Component {
                 console.log("registration failed")
             }
         })
+
+        }
+        else{
+            console.log("Entered passwords do not match")
+        }
+        
+        
     }
 
 
@@ -90,20 +135,87 @@ class Registration extends Component {
 
                 <b><p>PASSWORD</p></b>
                   <TextField
-                  input type = "password"
+                  type={this.state.showPassword ? 'text' : 'password'}
                   variant="outlined"
                   margin="normal"
                   value = {this.state.password}
                   onChange={this.handlePw}
+                  InputProps={{
+                    endAdornment : (
+                        <InputAdornment position="end">
+                            <IconButton onClick={this.handleShowPw}>
+                                {this.state.showPassword ? <AccessibilitySharpIcon/> : <AccessibleForwardSharpIcon/>}
+                            </IconButton>
+                        </InputAdornment>
+                    )
+                }}
+                  fullWidth
+                  />
+
+                <b><p>CONFIRM PASSWORD</p></b>
+                  <TextField
+                  type={this.state.showPassword ? 'text' : 'password'}
+                  variant="outlined"
+                  margin="normal"                
+                  onChange = {this.handleCfmPw}
+                  InputProps={{
+                    endAdornment : (
+                        <InputAdornment position="end">
+                            <IconButton onClick={this.handleShowPw}>
+                                {this.state.showPassword ? <AccessibilitySharpIcon/> : <AccessibleForwardSharpIcon/>}
+                            </IconButton>
+                        </InputAdornment>
+                    )
+                }}
+                  fullWidth
+                  />
+
+                <b><p>First Name</p></b>
+                  <TextField
+                  input type = "text"
+                  variant="outlined"
+                  margin="normal"
+                  value = {this.state.firstname}
+                  onChange={this.handleFn}
+                  fullWidth
+                  />
+
+                <b><p>Last Name</p></b>
+                  <TextField
+                  input type = "text"
+                  variant="outlined"
+                  margin="normal"
+                  value = {this.state.lastname}
+                  onChange={this.handleLn}
+                  fullWidth
+                  />
+
+                <b><p>Email</p></b>
+                  <TextField
+                  input type = "text"
+                  variant="outlined"
+                  margin="normal"
+                  value = {this.state.email}
+                  onChange={this.handleEm}
+                  fullWidth
+                  />
+
+                <b><p>Mobile Number</p></b>
+                  <TextField
+                  input type = "text"
+                  variant="outlined"
+                  margin="normal"
+                  value = {this.state.mobileNo}
+                  onChange={this.handleMn}
                   fullWidth
                   />
 
                   <Button 
-                   onClick={this.loginHandler}
+                   onClick={this.RegisterHandler}
                    variant="contained"
                    style={{"backgroundColor": "#3868b5", "color": "white",
                    "marginLeft": "auto", "marginRight": "auto", "display": "block", "marginTop": "15px", 
-                   "marginBottom": "15px"}}>LOGIN</Button>
+                   "marginBottom": "15px"}}>Register</Button>
 
 
 

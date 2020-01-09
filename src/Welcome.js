@@ -1,22 +1,182 @@
 import React, {Component} from 'react';
-import { Container, Typography, GridList, GridListTile,IconButton,GridListTileBar} from '@material-ui/core';
+import { Container, Typography, Grid,Button, TextField, GridList} from '@material-ui/core';
+import Axios from 'axios';
+import {Link, withRouter} from 'react-router-dom'
 
-import {Link} from 'react-router-dom'
+import { Redirect } from 'react-router';
 
-import harold from './harold.jpg';
-import random from './random.jpg';
-import boomer from './ok boomer.jpg';
-
-import ThumbUpIcon from '@material-ui/icons/ThumbUp';
-import TagFacesIcon from '@material-ui/icons/TagFaces';
-import InstagramIcon from '@material-ui/icons/Instagram';
-import ShareIcon from '@material-ui/icons/Share';
 
 class Welcome extends Component{
 
+    constructor(){
+        super();
+        this.state =({
+            accounts : []
+        })
+    }
+
+    UNSAFE_componentWillMount = () => {
+        Axios.get("http://localhost:8091/accounts")
+        .then(res => {
+        this.setState({
+            accounts : res.data
+        })
+        console.log("printing response")
+        console.log(res.data);
+        var rows = []
+    }) 
+    }
+
+
+   deleteHandler = (UserName) => {
+       var postData = ({
+           username : UserName
+       })
+    
+    Axios.delete("http://localhost:8091/delete", postData)
+    .then(res => {
+        console.log("attemping delete")
+        console.log(postData)
+        console.log("res.data")
+
+        if (res.data === true){
+            console.log("delete successful")
+            window.location.reload();
+            
+        }
+    })
+    }
+
+    resetPwHandler = (UserName) => {
+        var postData = ({
+            username : UserName
+        })
+     
+     Axios.post("http://localhost:8091/resetPassword", postData)
+     .then(res => {
+        console.log("attemping reset password")
+        console.log(postData)
+        console.log(res.data)
+
+         if (res.data === true){
+             console.log("Reset Password successful")
+             console.log("New password is : Password123!")
+             window.location.reload();
+             
+             
+         }
+     })
+     }
+               
+    
+    
+    
+    
+
+
+
 
     render (){
+
+       
+
+        this.rows = this.state.accounts.map ( account => (
+            <Grid>
+
+          
+          <TextField 
+            defaultValue={account.username}
+            variant="outlined"
+            margin="normal"
+            InputProps={{
+                readOnly: true
+            }}
+            />
+            
+
+            
+            <TextField 
+            defaultValue={account.password}
+            variant="outlined"
+            margin="normal"
+            InputProps={{
+                readOnly: true
+            }}
+            />
+            
+
+            
+            <TextField 
+            defaultValue={account.firstname}
+            variant="outlined"
+            margin="normal"
+            InputProps={{
+                readOnly: true
+            }}
+            />
+           
+            
+            
+            <TextField 
+            defaultValue={account.lastname}
+            variant="outlined"
+            margin="normal"
+            InputProps={{
+                readOnly: true
+            }}
+            />
+            
+
+           
+            <TextField 
+            defaultValue={account.email}
+            variant="outlined"
+            margin="normal"
+            InputProps={{
+                readOnly: true
+            }}
+            />
+           
+
+         
+            <TextField 
+            defaultValue={account.mobileNo}
+            variant="outlined"
+            margin="normal"
+            InputProps={{
+                readOnly: true
+            }}
+            />
+
+
+            <Button 
+                onClick={() => this.resetPwHandler(account.username)}
+                variant="contained"
+                style={{"backgroundColor": "#3868b5", "color": "white",
+                "marginLeft": "auto", "marginRight": "auto", "display": "block", "marginTop": "15px", 
+                "marginBottom": "15px"}}>RESET PASSWORD</Button>
+
+            <Button 
+                onClick={() => this.deleteHandler(account.username)}
+                variant="contained"
+                style={{"backgroundColor": "#3868b5", "color": "white",
+                "marginLeft": "auto", "marginRight": "auto", "display": "block", "marginTop": "15px", 
+                "marginBottom": "15px"}}>DELETE</Button>
+         
+
+
+
+          </Grid>
+
+        ))
+        console.log("printing rows")
+        console.log(this.rows)
+            
+         
+
+
         return (
+            
             <Container maxWidth="md">
 
                 <Typography  
@@ -25,50 +185,15 @@ class Welcome extends Component{
                 style={{ backgroundColor: '#cfe8fc', color : "blue"}}>
                     Welcome To The Application</Typography>
 
-                <GridList cols={2}>
-                    
-
-                    <GridListTile key = "harold" >
-                        <img src={harold} alt = {harold}/>
-                        <GridListTileBar title = "Hide The Pain Harold" 
-                        actionIcon={
-                        <IconButton>
-                            <ThumbUpIcon color="primary" fontSize="large"/>
-                            
-                        </IconButton>
-                        }/>
-                    </GridListTile>
-
-                    <GridListTile key = "random">
-                        <img src={random} alt = {random}/>
-                        <GridListTileBar title = "Random Person" 
-                        actionIcon={
-                        <IconButton>
-                            <TagFacesIcon color="primary" fontSize="small"/>
-                            <InstagramIcon color="secondary"/>
-                            <ShareIcon color="error" fontSize="large"/>
-                        </IconButton>
-                        }/>
-                    </GridListTile>
+                <GridList container direction="row" cols={6}>
+                      {this.rows}
+                </GridList>
+                <br/>
                 
 
-                <GridListTile key = "boomer" rows = "5" cols = "2">
-                        <img src={boomer} alt = {boomer}/>
-                        <GridListTileBar title = "OK Boomer" 
-                        actionIcon={
-                        <IconButton>
-                            <TagFacesIcon color="primary" fontSize="small"/>
-                            <InstagramIcon color="secondary"/>
-                            <ShareIcon color="error" fontSize="large"/>
-                        </IconButton>
-                        }/>
-                    </GridListTile>
+                
 
 
-
-
-
-                </GridList>
 
 
                 <Link to="/Home">GO BACK TO LOGIN PAGE</Link>
@@ -87,4 +212,4 @@ class Welcome extends Component{
   
 }
 
-export default Welcome;
+export default withRouter(Welcome);

@@ -1,9 +1,12 @@
 import React, {Component} from 'react';
-import { Container, TextField, Button, Typography } from '@material-ui/core';
+import { Container, TextField, Button, Typography,InputAdornment, IconButton  } from '@material-ui/core';
 import Axios from 'axios';
 import { Redirect } from 'react-router';
 import {Link} from 'react-router-dom'
 
+
+import AccessibleForwardSharpIcon from '@material-ui/icons/AccessibleForwardSharp';
+import AccessibilitySharpIcon from '@material-ui/icons/AccessibilitySharp';
 
 class Home extends Component {
 
@@ -12,10 +15,12 @@ class Home extends Component {
         this.state ={
             password : "",
             username : "",
-            redirect : false
+            redirect : false,
+            showPassword : false
         }
         this.handlePw = this.handlePw.bind(this);
         this.handleUn = this.handleUn.bind(this);
+        this.handleShowPw = this.handleShowPw.bind(this);
     }
 
     handlePw = (inputPw) => {
@@ -24,6 +29,9 @@ class Home extends Component {
 
     handleUn = (inputUn) => {
         this.setState({username : inputUn.target.value})
+    }
+    handleShowPw = () => {
+        this.setState({showPassword : !this.state.showPassword})
     }
 
 
@@ -58,7 +66,9 @@ class Home extends Component {
     render() {
 
         if (this.state.redirect === true){
-            return <Redirect to ='/Welcome'/>
+                return <Redirect to ='/Welcome'/>
+            
+        
         }
 
         return(
@@ -85,12 +95,21 @@ class Home extends Component {
 
                 <b><p>PASSWORD</p></b>
                   <TextField
-                  input type = "password"
+                  type={this.state.showPassword ? 'text' : 'password'}
                   variant="outlined"
                   margin="normal"
                   value = {this.state.password}
                   onChange={this.handlePw}
                   fullWidth
+                  InputProps={{
+                    endAdornment : (
+                        <InputAdornment position="end">
+                            <IconButton onClick={this.handleShowPw}>
+                                {this.state.showPassword ? <AccessibilitySharpIcon/> : <AccessibleForwardSharpIcon/>}
+                            </IconButton>
+                        </InputAdornment>
+                    )
+                }}
                   />
 
                   <Button 
